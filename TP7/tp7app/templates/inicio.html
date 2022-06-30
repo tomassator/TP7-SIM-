@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link type="text/css" href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <h1 class="bg-warning">INICIO TP7</h1>
+        </div>
+    </div>
+
+    <div class="container inline>">
+        <form method="GET" action="/resoluciontp7">
+
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="cantIteraciones" class="form-label">Cantidad de iteraciones</label>
+                    <input type="number" min="0" class="form-control" id="cantIteraciones" name="cantIteraciones" value="10000">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="desde" class="form-label">Ver vector desde la iteracion: </label>
+                    <input type="number" class="form-control" id="desde" name="desde" value="0">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="mediaLlegadas" class="form-label"> Media llegadas (Exp en horas)</label>
+                    <input type="number" class="form-control" id="mediaLlegadas" name="mediaLlegadas" value="0.25">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="reparacionInferior" class="form-label">Extremo inferior tiempo reparaciones (En horas)</label>
+                    <input type="number" class="form-control" id="reparacionInferior" name="reparacionInferior" value="0.11">
+                </div>
+
+                <div class="col mb-3">
+                    <label for="reparacionSuperior" class="form-label"> Extremo superior tiempo reparaciones (En horas)</label>
+                    <input type="number" class="form-control" id="reparacionSuperior" name="reparacionSuperior" value="0.38">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="atencionInferior" class="form-label"> Extremo inferior tiempo atencion (En horas)</label>
+                    <input type="number" class="form-control" id="atencionInferior" name="atencionInferior" value="0.03">
+                </div>
+
+                <div class="col mb-3">
+                    <label for="atencionSuperior" class="form-label"> </label>
+                    <input type="number" class="form-control" id="atencionSuperior" name="atencionSuperior" value="0.06">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="btn btn-warning">Simular</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
