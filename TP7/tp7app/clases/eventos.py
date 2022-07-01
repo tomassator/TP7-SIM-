@@ -1,13 +1,14 @@
+from tp7app.clases import variables as v
 
 class Evento:
 
     def __init__(self):
-        self.eventoInicializacion = "inicializacion"
-        self.eventoLlegadaClientes = "llegada_cliente"
-        self.eventoFinAtencionCliente = "fin_atencion_cliente"
-        self.eventoFinReparacion = "fin_reparacion"
-        self.eventoLlegadaInterrupcion = "llegada_interrupcion_pedidos"
-        self.eventoFinInterrupcion = "fin_interrupcion"
+        self.eventoInicializacion = v.eventoInicializacion
+        self.eventoLlegadaClientes = v.eventoLlegadaClientes
+        self.eventoFinAtencionCliente = v.eventoFinAtencionCliente
+        self.eventoFinReparacion = v.eventoFinReparacion
+        self.eventoLlegadaInterrupcion = v.eventoLlegadaInterrupcion
+        self.eventoFinInterrupcion = v.eventoFinInterrupcion
         self.banderaPrimeraIteracion = True
 
 
@@ -53,4 +54,5 @@ class Evento:
 
 
         else:
+            self.banderaPrimeraIteracion = False
             return self.eventoLlegadaClientes

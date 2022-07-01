@@ -5,12 +5,13 @@ import math
 
 
 def rnd_uniforme(li, ls):
-
-    calculo = li + (random.random() * (ls-li))
-    return round(calculo,3)
+    rnd = random.random()
+    calculo = li + (rnd * (ls-li))
+    return round(rnd, 3), round(calculo,3)
 
 
 
 def rnd_exponencial(media):
-    calculo = -media * math.log(1 - random.random())
-    return round(calculo,3)
+    rnd = random.random()
+    calculo = -media * math.log(1 - rnd)
+    return round(rnd, 3), round(calculo,3)

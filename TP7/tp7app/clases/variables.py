@@ -10,8 +10,8 @@ reparando = "R"
 
 siendo_at_pedido = "SAP"
 siendo_at_retiro = "SAR"
-esperando_cola_retiro = "ECR"
-esperando_cola_pedido =  "ECP"
+esperando_retiro = "EPR"
+esperando_pedido = "EPP"
 abandono_sin_zapato = "ASZ"
 
 
@@ -33,3 +33,13 @@ fuera_sistema = "-"
 
 retirar = "Retirar"
 pedido = "Pedido"
+
+
+#Nombre eventos
+
+eventoInicializacion = "inicializacion"
+eventoLlegadaClientes = "llegada_cliente"
+eventoFinAtencionCliente = "fin_atencion_cliente"
+eventoFinReparacion = "fin_reparacion"
+eventoLlegadaInterrupcion = "cierre_zapateria"
+eventoFinInterrupcion = "apertura_zapateria"

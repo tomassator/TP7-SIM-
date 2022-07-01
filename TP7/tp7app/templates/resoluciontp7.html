@@ -28,13 +28,12 @@
                 <th class="header reparacion" scope="col">Rnd reparacion</th>
                 <th class="header reparacion" scope="col">Tiempo reparacion</th>
                 <th class="header reparacion" scope="col">Fin reparacion</th>
-                <th class="header interrupcion" scope="col">Tiempo entre interrupciones</th>
-                <th class="header interrupcion" scope="col">Proxima interrupcion</th>
-                <th class="header interrupcion" scope="col">Tiempo Interrupcion</th>
-                <th class="header interrupcion" scope="col">Fin interrupcion</th>
+                <th class="header interrupcion" scope="col">Tiempo hasta el cierre</th>
+                <th class="header interrupcion" scope="col">Proxima cierre</th>
+                <th class="header interrupcion" scope="col">Tiempo hasta la apertura</th>
+                <th class="header interrupcion" scope="col">Apertura Local</th>
                 <th class="header zapatero" scope="col">Estado Zapatero</th>
-                <th class="header zapatero" scope="col">Cola retiro</th>
-                <th class="header zapatero" scope="col">Cola pedido</th>
+                <th class="header zapatero" scope="col">Cola clientes</th>
                 <th class="header zapatero" scope="col">Cola zapatos a reparar</th>
                 <th class="header zapatero" scope="col">Tiempo restante reparacion</th>
                 <th class="header estadisticas" scope="col">Zapatos Reparados</th>
@@ -55,8 +54,8 @@
       </thead>
       <tbody>
             {% for fila in vector %}
-            <tr id="filaselec{{fila.29}}" >
-                <th scope="row"> <input type="radio" name="btnselec" id="btnselec{{fila.29}}" onchange="javascript:pintar('{{fila.29}}', {{verdesde}})">{{fila.29}}</th>
+            <tr id="filaselec{{fila.28}}" >
+                <th scope="row"> <input type="radio" name="btnselec" id="btnselec{{fila.28}}" onchange="javascript:pintar('{{fila.28}}', {{verdesde}})">{{fila.28}}</th>
                 <td>{{fila.0}}</td>
                 <td>{{fila.1}}</td>
                 <td>{{fila.2}}</td>
@@ -83,11 +82,10 @@
                 <td>{{fila.23}}</td>
                 <td>{{fila.24}}</td>
                 <td>{{fila.25}}</td>
-                <td>{{fila.26}}</td>
-                {% for cli in fila.27 %}
+                {% for cli in fila.26 %}
                 <td>{{cli.estado}}</td>
                 {% endfor %}
-                {% for zap in fila.28 %}
+                {% for zap in fila.27 %}
                 <td>{{zap.estado}}</td>
                 {% endfor %}
             </tr>

@@ -5,8 +5,7 @@ from tp7app.clases import clientes
 class Zapatero:
 
     def __init__(self):
-        self.colaPedidos = []
-        self.colaRetiros = []
+        self.colaClientes = []
         self.colaZapatos = []
         self.estado = v.libre
         self.tiempo_restante_reparacion = 0
@@ -18,20 +17,16 @@ class Zapatero:
     def get_estado(self):
         return self.estado
 
-    def get_cola_pedidos(self):
-        return self.colaPedidos
+    def get_cola_Clientes(self):
+        return self.colaClientes
 
-    def get_cola_retiros(self):
-        return self.colaRetiros
 
     def get_cola_zapatos(self):
         return self.colaZapatos
 
-    def get_long_cola_retiros(self):
-        return len(self.colaRetiros)
+    def get_long_cola_clientes(self):
+        return len(self.colaClientes)
 
-    def get_long_cola_pedidos(self):
-        return len(self.colaPedidos)
 
     def get_long_cola_zapatos(self):
         return len(self.colaZapatos)
@@ -40,20 +35,24 @@ class Zapatero:
         return self.tiempo_restante_reparacion
 
 
-    def agregar_cola_pedido(self, pedido):
-        self.colaPedidos.append(pedido)
+    def agregar_cola_clientes(self, pedido):
+        self.colaClientes.append(pedido)
 
-    def sacar_cola_pedido(self, pedido):
-        self.colaPedidos.append(pedido)
+    def sacar_cola_clientes(self, pedido):
+        self.colaClientes.remove(pedido)
 
-    def agregar_cola_retiro(self, retiro):
-        self.colaRetiros.append(retiro)
-
-    def sacar_cola_retiro(self, retiro):
-        self.colaRetiros.remove(retiro)
 
     def agregar_cola_zapato(self, zapato):
         self.colaZapatos.remove(zapato)
 
     def sacar_cola_zapato(self, zapato):
         self.colaZapatos.remove(zapato)
+
+
+    #Funcion que determina el estado del zapatero en la llegada de un nuevo cliente que va a ser atendido
+    def determinar_estado_llegada(self, accion_cliente):
+        if accion_cliente == v.retirar:
+            self.set_estado(v.atendiendo_retiro)
+        else:
+            self.set_estado(v.atendiendo_pedido)
+
