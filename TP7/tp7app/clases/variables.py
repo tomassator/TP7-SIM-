@@ -27,3 +27,9 @@ esperando_reparo = "ER"
 #Estado cuando se van del sistema
 
 fuera_sistema = "-"
+
+
+#Acciones del cliente
+
+retirar = "Retirar"
+pedido = "Pedido"

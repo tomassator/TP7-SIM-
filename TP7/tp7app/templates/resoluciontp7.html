@@ -5,8 +5,96 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link type="text/css" href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'css/resoluciontp7.css' %}" rel="stylesheet">
+    <script type="text/javascript" src="{% static 'js/resoluciontp7.js' %}"></script>
 </head>
 <body>
+
+    <table class="table table-bordered border-secondary thead-dark">
+      <thead>
+            <tr>
+                <th class="header basicas" scope="col">Iteracion</th>
+                <th class="header basicas" scope="col">Evento</th>
+                <th class="header basicas" scope="col">Reloj</th>
+                <th class="header llegadas" scope="col">Rnd Llegadas</th>
+                <th class="header llegadas" scope="col">Tiempo entre llegadas</th>
+                <th class="header llegadas" scope="col">Proxima Llegada</th>
+                <th class="header llegadas" scope="col">Rnd accion</th>
+                <th class="header llegadas" scope="col">Accion cliente</th>
+                <th class="header atencion" scope="col">Rnd atencion</th>
+                <th class="header atencion" scope="col">Tiempo Atencion</th>
+                <th class="header atencion" scope="col">Fin atencion</th>
+                <th class="header reparacion" scope="col">Tiempo Secado</th>
+                <th class="header reparacion" scope="col">Rnd reparacion</th>
+                <th class="header reparacion" scope="col">Tiempo reparacion</th>
+                <th class="header reparacion" scope="col">Fin reparacion</th>
+                <th class="header interrupcion" scope="col">Tiempo entre interrupciones</th>
+                <th class="header interrupcion" scope="col">Proxima interrupcion</th>
+                <th class="header interrupcion" scope="col">Tiempo Interrupcion</th>
+                <th class="header interrupcion" scope="col">Fin interrupcion</th>
+                <th class="header zapatero" scope="col">Estado Zapatero</th>
+                <th class="header zapatero" scope="col">Cola retiro</th>
+                <th class="header zapatero" scope="col">Cola pedido</th>
+                <th class="header zapatero" scope="col">Cola zapatos a reparar</th>
+                <th class="header zapatero" scope="col">Tiempo restante reparacion</th>
+                <th class="header estadisticas" scope="col">Zapatos Reparados</th>
+                <th class="header estadisticas" scope="col">Clientes Abandonan</th>
+                <th class="header estadisticas" scope="col">Pedidos Ingresados</th>
+                <th class="header estadisticas" scope="col">Retiros efectuados</th>
+                {% for cli in clientes %}
+                <th class="header clientes" scope="col">Estado cliente({{cli.nro}})</th>
+                {% endfor%}
+                {% for zap in zapatos %}
+                <th class="header zapatos" scope="col">Estado zapato({{zap.nro}})</th>
+                {% endfor%}
+
+
+
+
+            </tr>
+      </thead>
+      <tbody>
+            {% for fila in vector %}
+            <tr id="filaselec{{fila.29}}" >
+                <th scope="row"> <input type="radio" name="btnselec" id="btnselec{{fila.29}}" onchange="javascript:pintar('{{fila.29}}', {{verdesde}})">{{fila.29}}</th>
+                <td>{{fila.0}}</td>
+                <td>{{fila.1}}</td>
+                <td>{{fila.2}}</td>
+                <td>{{fila.3}}</td>
+                <td class="eventos">{{fila.4}}</td>
+                <td>{{fila.5}}</td>
+                <td>{{fila.6}}</td>
+                <td>{{fila.7}}</td>
+                <td>{{fila.8}}</td>
+                <td class="eventos">{{fila.9}}</td>
+                <td>{{fila.10}}</td>
+                <td>{{fila.11}}</td>
+                <td>{{fila.12}}</td>
+                <td class="eventos">{{fila.13}}</td>
+                <td>{{fila.14}}</td>
+                <td class="eventos">{{fila.15}}</td>
+                <td>{{fila.16}}</td>
+                <td class="eventos">{{fila.17}}</td>
+                <td>{{fila.18}}</td>
+                <td>{{fila.19}}</td>
+                <td>{{fila.20}}</td>
+                <td>{{fila.21}}</td>
+                <td>{{fila.22}}</td>
+                <td>{{fila.23}}</td>
+                <td>{{fila.24}}</td>
+                <td>{{fila.25}}</td>
+                <td>{{fila.26}}</td>
+                {% for cli in fila.27 %}
+                <td>{{cli.estado}}</td>
+                {% endfor %}
+                {% for zap in fila.28 %}
+                <td>{{zap.estado}}</td>
+                {% endfor %}
+            </tr>
+
+            {% endfor %}
+      </tbody>
+    </table>
 
 
 </body>

@@ -1,0 +1,64 @@
+thead tr th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #ffffff;
+        }
+
+.table .sticky{
+    position: sticky;
+    left: 0px;
+}
+
+.table .sticky2{
+    position: sticky;
+    left: 83px;
+}
+
+.table .sticky3{
+    position: sticky;
+    left: 188px;
+}
+
+
+.table .basicas{
+    background-color: rgb(33, 228, 184);
+}
+
+.table .llegadas{
+    background-color: rgb(185, 134, 213);
+}
+
+.table .reparacion{
+    background-color:rgb(213, 134, 191 ) ;
+}
+
+.table .atencion{
+    background-color: rgb(201, 176, 85 );
+}
+
+.table .interrupcion{
+    background-color:rgb(99, 222, 84 ) ;
+}
+
+.table .estadisticas{
+    background-color:rgb(240, 164, 23 ) ;
+}
+
+
+.table .clientes{
+    background-color:rgb(220, 247, 26 ) ;
+}
+
+.table .zapatos{
+    background-color:rgb(81, 93, 231 ) ;
+}
+
+.table .zapatero{
+    background-color:rgb(141, 137, 153 ) ;
+}
+
+.table .eventos{
+    background-color:rgb(252, 241, 10 ) ;
+}
+
