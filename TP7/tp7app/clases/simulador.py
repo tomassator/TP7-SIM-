@@ -50,6 +50,7 @@ class Simulador:
 
         self.bandera_inicializacion = True
         self.bandera_zapateria_abierta = True
+        self.bandera_eliminar_cliente_abandono = False
 
         # Objetos
         self.zapatero = zapatero.Zapatero()
@@ -61,14 +62,16 @@ class Simulador:
         self.rnd_accion_cliente = None
         self.rnd_reparacion = None
 
-        #Acumuladores para identificar id de zapatos y clientes que ingresan
+        #Acumuladores para identificar id de zapatos y clientes que ingresan, zapatos disponibles en el momento
         self.nro_zapato = 0
         self.nro_cliente = 0
+        self.zapatos_disponibles_retiro = 10
 
         #OBJETOS TEMPORALES QUE SE VAN A MOSTRAR EN LAS ITERACIONES DETERMINADAS
         self.clientes_actuales = []
         self.zapatos_actuales = []
         self.zapato_a_reparar = None
+        self.cliente_abandono = None
 
         #Otros atributos que se deben mostrar en el vector
         self.accion_cliente = None
@@ -85,6 +88,7 @@ class Simulador:
         self.vector_resultado = []
 
         for i in range(0, self.iteraciones):
+
             #Seteamos a valor default las variables que se ejecutan una sola linea y no se arrastran
             self.accion_cliente = v.fuera_sistema
             self.rnd_accion_cliente = v.fuera_sistema
@@ -97,6 +101,7 @@ class Simulador:
             self.tiempo_interrupcion = v.fuera_sistema
             self.tiempo_entre_interrupciones = v.fuera_sistema
 
+
             if not self.bandera_inicializacion:
 
                 self.iteracion += 1    #Incrementamos la iteracion
@@ -104,6 +109,11 @@ class Simulador:
                 proximo_evento = self.obj_evento.determinarSigEvento(self.proxima_llegada, self.fin_atencion_cliente, self.fin_reparacion, self.llegada_interrupcion, self.fin_interrupcion)
                 #Sacamos la accion del cliente
 
+
+                #Checkeamos si en la iteracion anterior algun cliente abandono
+                if self.bandera_eliminar_cliente_abandono:
+                    self.clientes.remove(self.cliente_abandono)
+                    self.bandera_eliminar_cliente_abandono = False
 
                 #EVENTO LLEGADA CLIENTES
                 ####
@@ -120,40 +130,55 @@ class Simulador:
                     self.reloj = self.proxima_llegada
                     #Calculamos la proxima llegada
                     self.rnd_llegadas, self.tiempo_entre_llegadas = generadorVariables.rnd_exponencial(self.media_llegadas)
-                    self.proxima_llegada = self.tiempo_entre_llegadas + self.reloj
+                    self.proxima_llegada = round(self.tiempo_entre_llegadas + self.reloj,3)
 
-                    #Incrementamos el numero de cliente y posteriormente creamos el objeto cliente y le asinamos su numero
-
-                    cliente_llega = clientes.Clientes()
-                    cliente_llega.set_nro(self.nro_cliente)
                     #agregamos al cliente a un arreglo para tenerlo en el sistemas hasta que se vaya
                     self.clientes.append(cliente_llega)
                     self.rnd_accion_cliente, self.accion_cliente = cliente_llega.determinar_accion()
 
+
+                    #SI VIENE A BUSCAR ZAPATOS Y NO HAY SE RETIRA
+                    if self.accion_cliente == v.retirar and self.zapatos_disponibles_retiro == 0:
+                        self.cliente_abandono = cliente_llega
+                        self.cliente_abandono.set_estado(v.abandono_sin_zapato)
+                        self.bandera_eliminar_cliente_abandono = True
+                        self.ac_clientes_abandonan += 1
+
+
+
+
                     #Verificamos que el zapatero este libre y a su vez que no haya cola de clientes
-                    if ((self.zapatero.estado == v.libre) or (self.zapatero.estado == v.reparando)) and len(self.zapatero.colaClientes) == 0:
+                    elif ((self.zapatero.estado == v.libre) or (self.zapatero.estado == v.reparando)) and len(self.zapatero.colaClientes) == 0:
 
-                        #DEJAMOS EN ESPERA TODAS LAS REPARACIONES QUE SE ESTABAN EFECTUANDO EN ESE MOMENTO
-                        if self.zapatero.estado == v.reparando:
-                            self.zapatero.set_tiempo_reparacion(self.fin_reparacion - self.reloj)
-                            self.zapato_a_reparar.set_estado(v.esperando_reanudacion_reparacion)
-
-
-                        #Determinamos el nuevo estado del zapatero
-                        self.zapatero.determinar_estado_llegada(self.accion_cliente)
-                        #Determinamos el estado del cliente
-                        cliente_llega.determinar_estado_atencion(self.accion_cliente)
+                        #Si el cliente viene a retirar le reservamos el zapato
+                        if self.accion_cliente == v.retirar:
+                            self.zapatos_disponibles_retiro -= 1
 
                         #Determinamos el fin de atencion del cliente
                         self.rnd_atencion, self.tiempo_atencion = generadorVariables.rnd_uniforme(self.atencion_inf, self.atencion_sup)  #Le mandamos los limites del intervalo
-                        self.fin_atencion_cliente = self.reloj + self.tiempo_atencion
+                        self.fin_atencion_cliente = round(self.reloj + self.tiempo_atencion,3)
 
+                        # DEJAMOS EN ESPERA LA REPARACION QUE SE ESTABA EFECTUANDO EN ESE MOMENTO
+                        if self.zapatero.estado == v.reparando:
+                            self.zapatero.set_tiempo_reparacion(self.fin_reparacion - self.reloj)
+                            self.zapato_a_reparar.set_estado(v.esperando_reanudacion_reparacion)
+                            self.fin_reparacion = round(
+                                self.fin_atencion_cliente + self.zapatero.get_tiempo_reparacion(), 3)
+
+                        # Determinamos el nuevo estado del zapatero
+                        self.zapatero.determinar_estado_llegada(self.accion_cliente)
+                        # Determinamos el estado del cliente
+                        cliente_llega.determinar_estado_atencion(self.accion_cliente)
 
                         #FALTA LA ACCION DE CUANDO LLEGA UN CLIENTE Y UN ZAPATO SE ESTA REPARANDO.
                         #FALTA LA ACCION DEL CLIENTE QUE SE VA POR NO HABER ZAPATOS
                         #REVISAR LA ACCION ANTERIOR PARA CADA EVENTO
                     #Si va a cola...
                     else:
+                        # Si el cliente viene a retirar le reservamos el zapato
+                        if self.accion_cliente == v.retirar:
+                            self.zapatos_disponibles_retiro -= 1
+
                         self.zapatero.colaClientes.append(cliente_llega)
                         cliente_llega.determinar_estado_cola(self.accion_cliente)
 
@@ -184,7 +209,11 @@ class Simulador:
                         # Acumulamos var estadistica
                         self.ac_retiros_efectuados += 1
                         # Se retira un zapato
+
                         self.zapatos.pop(0)
+
+
+
 
                     # ¿Hay gente en cola?
 
@@ -200,42 +229,79 @@ class Simulador:
 
                         #Calculamos el fin de atencion
                         self.rnd_atencion, self.tiempo_atencion = generadorVariables.rnd_uniforme(self.atencion_inf, self.atencion_sup)
-                        self.fin_atencion_cliente = self.reloj + self.tiempo_atencion
+                        self.fin_atencion_cliente = round(self.reloj + self.tiempo_atencion,3)
+
+                        #Si entra un nuevo cliente y habia un zapato esperando su reperacion debe actualizarse su fin de reparacion
+                        if self.zapato_a_reparar != None:
+                            self.fin_reparacion = self.fin_atencion_cliente + self.zapatero.get_tiempo_reparacion()
+
+
+                    #Si hay zapatos en cola o habia algun zapato reparandose.....
+                    elif len(self.zapatero.colaZapatos) != 0 or (self.zapato_a_reparar != None):
+                        #Seteamos el fin de atencion y nuevo estado de zapatero
+                        self.zapatero.set_estado(v.reparando)
+                        self.fin_atencion_cliente = v.fuera_sistema
+                        #Vemos si habia algun zapato en reparacion y le devolvemos su estado y seteamos el tiempo restante de separacion
+                        if self.zapato_a_reparar != None:
+                            self.zapato_a_reparar.set_estado(v.siendo_reparados)
+                            self.zapatero.set_tiempo_reparacion(0)
+                        else:
+                            # Calculo de fin de reparacion
+                            # Sacamos zapato de cola y le asignamos estado de reparando
+                            self.zapato_a_reparar = self.zapatero.colaZapatos.pop(0)
+                            self.zapato_a_reparar.set_estado(v.siendo_reparados)
+                            self.rnd_reparacion, self.tiempo_reparacion = generadorVariables.rnd_uniforme(
+                                self.reparacion_inf, self.reparacion_sup)
+                            self.fin_reparacion = round(self.reloj + self.tiempo_reparacion + self.tiempo_secado,3)
 
 
                     #Si no hay gente en cola tanto clientes como de zapatos....
                     else:
                         self.zapatero.set_estado(v.libre)
                         self.fin_atencion_cliente = v.fuera_sistema
+                        self.zapato_a_reparar = None
 
-                    # Vemos si hay cola para arreglar el zapatos, si no hay automaticamente asignamos un fin de reparacion
-                    # Si hay cola lo mandamos a cola y seteamos su estado en ambos casos
-                    # Recordar que si entran clientes no corre el tiempo de reparacion hasta que se vayan
-                    if len(self.zapatero.colaZapatos) != 0 and len(self.zapatero.colaClientes) == 0:
-                        #Vemos si habia algun zapato en reparacion
-                        if self.zapato_a_reparar != None:
-                            self.fin_reparacion = self.fin_reparacion + self.zapatero.tiempo_restante_reparacion
-                        # Calculo de fin de reparacion
-                        # Sacamos zapato de cola y le asignamos estado de reparando
+
+
+#################EVENTO FIN DE ATENCION DE REPARACION##################################################################
+                #####
+                #####
+                elif proximo_evento == v.eventoFinReparacion:
+                    #seteamos reloj y evento
+                    self.evento = v.eventoFinReparacion + "(" + str(self.zapato_a_reparar.nro) + ")"
+                    self.reloj = self.fin_reparacion
+                    self.zapatero.set_tiempo_reparacion(0)
+
+                    #Acumulamos var estadistica
+                    self.ac_zapatos_terminados += 1
+                    self.zapatos_disponibles_retiro += 1
+                    #Seteamos estado del zapato
+                    self.zapato_a_reparar.set_estado(v.reparados)
+
+                    #Vemos si hay zapatos en cola para reparar
+                    if len(self.zapatero.colaZapatos) != 0:
+                        #Obtenemos el nuevo zapato a reparar
                         self.zapato_a_reparar = self.zapatero.colaZapatos.pop(0)
-                        self.zapato_a_reparar.set_estado(v.reparando)
-                        self.rnd_reparacion, self.tiempo_reparacion = generadorVariables.rnd_uniforme(
-                            self.reparacion_inf, self.reparacion_sup)
-                        self.fin_reparacion = self.reloj + self.tiempo_reparacion + self.tiempo_secado
-                        # Seteamos estado del zapatero
-                        self.zapatero.set_estado(v.reparando)
+                        #seteamos el estado de el zapato que sale de la cola
+                        self.zapato_a_reparar.set_estado(v.siendo_reparados)
+                        #calculamos el fin de reparacion
+                        self.rnd_reparacion, self.tiempo_reparacion = generadorVariables.rnd_uniforme(self.reparacion_inf, self.reparacion_sup)
+                        self.fin_reparacion = round(self.reloj + self.tiempo_secado + self.tiempo_reparacion,3)
 
-
-                elif self.evento == v.eventoFinReparacion:
-                    pass
-
-
-
-
-
+                    #Si no hay zapatos en cola
+                    else:
+                        #seteamos estado del zapatero
+                        self.zapatero.set_estado(v.libre)
+                        self.fin_reparacion = v.fuera_sistema
+                        self.zapato_a_reparar = None
 
 
 
+
+
+
+
+#INICIALIZACION
             else:
                 self.bandera_inicializacion = False
                 # SE SETEAN TODOS LOS VALORES DE INICIALIZACION
@@ -254,12 +320,17 @@ class Simulador:
                 # Determinamos proxima llegada
                 self.proxima_llegada = self.tiempo_entre_llegadas + self.reloj
                 # Determinamos la llegada interrupcion
-                self.llegada_interrupcion = 8  # A las 8 horas de arrancada la simulacion deja de recibir pedidos
+                self.llegada_interrupcion = None  # A las 8 horas de arrancada la simulacion deja de recibir pedidos #SE SETEA EN NONE POR CUESTIONES DE PRUEBA
                 # Inicializamos las variables estadisticas
                 self.ac_zapatos_terminados = 10
                 self.ac_clientes_abandonan = 0
                 self.ac_pedidos_efectuados = 0
                 self.ac_retiros_efectuados = 0
+
+                #seteamos estados
+                self.fin_reparacion = v.fuera_sistema
+                self.fin_atencion_cliente = v.fuera_sistema
+                self.fin_interrupcion = v.fuera_sistema #En el vector se ve como apertura del local
 
 
 
@@ -319,6 +390,7 @@ class Simulador:
                                          self.estados_c,                                 #26   Modificar para que en el arreglo se muestren los que se tienen que mostrar. Hacer una snapshot en cada iteracion
                                          self.estados_z,                                  #27  Idem que anterior
                                          self.iteracion,                                #28
+                                         self.zapatos_disponibles_retiro,               #29
                                         ])
 
         return self.vector_resultado

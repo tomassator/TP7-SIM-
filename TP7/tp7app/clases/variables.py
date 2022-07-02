@@ -18,7 +18,7 @@ abandono_sin_zapato = "ASZ"
 #Estados Zapatos
 
 siendo_reparados = "SR"
-reparados = "R"
+reparados = "RL"  #Reparacion Lista
 esperando_reanudacion_reparacion = "ERR"
 esperando_reparo = "ER"
 

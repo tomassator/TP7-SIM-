@@ -40,6 +40,7 @@
                 <th class="header estadisticas" scope="col">Clientes Abandonan</th>
                 <th class="header estadisticas" scope="col">Pedidos Ingresados</th>
                 <th class="header estadisticas" scope="col">Retiros efectuados</th>
+                <th class="header estadisticas" scope="col">Zapatos Disponibles</th>
                 {% for cli in clientes %}
                 <th class="header clientes" scope="col">Estado cliente({{cli}})</th>
                 {% endfor%}
@@ -82,6 +83,7 @@
                 <td>{{fila.23}}</td>
                 <td>{{fila.24}}</td>
                 <td>{{fila.25}}</td>
+                <td>{{fila.29}}</td>
                 {% for cli in fila.26 %}
                 <td>{{cli}}</td>
                 {% endfor %}
