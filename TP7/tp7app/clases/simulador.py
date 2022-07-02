@@ -82,7 +82,7 @@ class Simulador:
     # Funcion que efectua la simulacion
     # LA SIMULACION ARRANCA A LAS 8AM ES DECIR ARRANCA ATENDIENDO
     def simular(self):
-        vector_resultado = []
+        self.vector_resultado = []
 
         for i in range(0, self.iteraciones):
             #Seteamos a valor default las variables que se ejecutan una sola linea y no se arrastran
@@ -157,7 +157,7 @@ class Simulador:
                         self.zapatero.colaClientes.append(cliente_llega)
                         cliente_llega.determinar_estado_cola(self.accion_cliente)
 
-                #EVENTO FIN DE ATENCION DE CLIENTES
+#################EVENTO FIN DE ATENCION DE CLIENTES##################################################################
                 #####
                 #####
                 elif proximo_evento == v.eventoFinAtencionCliente:
@@ -190,11 +190,13 @@ class Simulador:
 
                     if len(self.zapatero.colaClientes) != 0:
                         cliente_entra = self.zapatero.colaClientes.pop(0)
-                        #Vemos que esperaba el cliente que estaba en cola y seteamos su respectivo estado
+                        #Vemos que esperaba el cliente que estaba en cola y seteamos su respectivo estado, lo mismo para el zapatero
                         if cliente_entra.estado == v.esperando_retiro:
                             cliente_entra.set_estado(v.siendo_at_retiro)
+                            self.zapatero.set_estado(v.atendiendo_retiro)
                         elif cliente_entra.estado == v.esperando_pedido:
                             cliente_entra.set_estado(v.siendo_at_pedido)
+                            self.zapatero.set_estado(v.atendiendo_pedido)
 
                         #Calculamos el fin de atencion
                         self.rnd_atencion, self.tiempo_atencion = generadorVariables.rnd_uniforme(self.atencion_inf, self.atencion_sup)
@@ -288,7 +290,7 @@ class Simulador:
 
 
 
-                vector_resultado.append([self.evento,                                   #0
+                self.vector_resultado.append([self.evento,                                   #0
                                          self.reloj,                                    #1
                                          self.rnd_llegadas,                             #2
                                          self.tiempo_entre_llegadas,                    #3
@@ -319,4 +321,4 @@ class Simulador:
                                          self.iteracion,                                #28
                                         ])
 
-        return vector_resultado
+        return self.vector_resultado

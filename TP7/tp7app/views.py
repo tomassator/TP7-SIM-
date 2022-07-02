@@ -34,5 +34,38 @@ def resoluciontp7(request):
         vam = simulacion.simular()   # VAM --> Vector a mostrar
 
 
+        #REFORMATEAMOS PARA PODER MOSTRAR LOS ESTADOS DE LOS OBJETOS
+        vector_estados_cliente = []
+        #VEMOS CUANTOS CLIENTES HAY QUE MOSTRAR EN EL VECTOR (LOS CLIENTES QUE INGRESARON A LA SIMULACION DURANTE EL INTERVALO PEDIDO)
+        longitud_clientes = len(simulacion.clientes_actuales)
+        #CREAMOS UN VECTOR QUE TENGA TANTOS ESTADOS PARA TODOS LOS CLIENTES
+        for i in range(0, len(simulacion.vector_resultado)):
+            vector_estados_cliente.append(["-"]*longitud_clientes)
+
+
+        #ASIGNAMOS DE FORMA MATRICIAL LOS ESTADOS
+        nro_fila = -1
+        #RECORREMOS CADA FILA DEL VECTOR RESULTADO
+        for fila in simulacion.vector_resultado:
+            nro_fila += 1
+            nro_estado = -1
+            #RECORREMOS CADA ESTADO DE LA ITERACION INDICADA
+            for estado in fila[26]:
+                nro_estado += 1
+                #ASIGNAMOS EL ESTADO CORRESPONDIENTE, LOS CLIENTES QUE AUN NO APARECIERON YA TIENEN ASIGNADO EL "-" QUE ASIGNAMOS EN LA CREACION DE ESTE VECTOR
+                vector_estados_cliente[nro_fila][nro_estado]=estado
+            #REFORMATEAMOS ESE VECTOR PARA QUE SE MUESTRE CORRECTAMENTE
+            fila[26] = vector_estados_cliente[nro_fila]
+
+
+
+
+
+
+
+
+
+
+
 
         return render(request, "resoluciontp7.html", {"vector": vam, "clientes":simulacion.clientes_actuales, "zapatos": simulacion.zapatos_actuales, "verdesde":int(verDesde)})
