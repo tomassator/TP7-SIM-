@@ -3,7 +3,9 @@ from tp7app.clases import simulador
 
 # Create your views here.
 
+def prueba(request):
 
+    return render(request, "prueba.html")
 
 def inicio(request):
 
@@ -33,4 +35,4 @@ def resoluciontp7(request):
 
 
 
-        return render(request, "resoluciontp7.html", {"vector": vam, "clientes":simulacion.clientes, "zapatos": simulacion.zapatos, "verdesde":int(verDesde)})
+        return render(request, "resoluciontp7.html", {"vector": vam, "clientes":simulacion.clientes_actuales, "zapatos": simulacion.zapatos_actuales, "verdesde":int(verDesde)})

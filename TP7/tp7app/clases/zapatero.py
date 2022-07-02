@@ -34,6 +34,9 @@ class Zapatero:
     def get_tiempo_reparacion(self):
         return self.tiempo_restante_reparacion
 
+    def set_tiempo_reparacion(self, tiempo):
+        self.tiempo_restante_reparacion = tiempo
+
 
     def agregar_cola_clientes(self, pedido):
         self.colaClientes.append(pedido)

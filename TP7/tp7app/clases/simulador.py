@@ -68,11 +68,16 @@ class Simulador:
         #OBJETOS TEMPORALES QUE SE VAN A MOSTRAR EN LAS ITERACIONES DETERMINADAS
         self.clientes_actuales = []
         self.zapatos_actuales = []
+        self.zapato_a_reparar = None
 
         #Otros atributos que se deben mostrar en el vector
         self.accion_cliente = None
         self.clientes = []
         self.zapatos = []
+
+        #atributos para mostrar en pantalla
+        self.estados_c = []
+        self.estados_z = []
 
     # Funcion que efectua la simulacion
     # LA SIMULACION ARRANCA A LAS 8AM ES DECIR ARRANCA ATENDIENDO
@@ -100,16 +105,25 @@ class Simulador:
                 #Sacamos la accion del cliente
 
 
+                #EVENTO LLEGADA CLIENTES
+                ####
+                ####
                 if proximo_evento == v.eventoLlegadaClientes:
+
+                    # Incrementamos el numero de cliente y posteriormente creamos el objeto cliente y le asinamos su numero
+                    self.nro_cliente += 1
+                    cliente_llega = clientes.Clientes()
+                    cliente_llega.set_nro(self.nro_cliente)
+
                     #Actualizamos el reloj y evento
-                    self.evento = v.eventoLlegadaClientes
+                    self.evento = v.eventoLlegadaClientes + "(" + str(self.nro_cliente) + ")"
                     self.reloj = self.proxima_llegada
                     #Calculamos la proxima llegada
                     self.rnd_llegadas, self.tiempo_entre_llegadas = generadorVariables.rnd_exponencial(self.media_llegadas)
                     self.proxima_llegada = self.tiempo_entre_llegadas + self.reloj
 
                     #Incrementamos el numero de cliente y posteriormente creamos el objeto cliente y le asinamos su numero
-                    self.nro_cliente += 1
+
                     cliente_llega = clientes.Clientes()
                     cliente_llega.set_nro(self.nro_cliente)
                     #agregamos al cliente a un arreglo para tenerlo en el sistemas hasta que se vaya
@@ -117,7 +131,14 @@ class Simulador:
                     self.rnd_accion_cliente, self.accion_cliente = cliente_llega.determinar_accion()
 
                     #Verificamos que el zapatero este libre y a su vez que no haya cola de clientes
-                    if (self.zapatero.estado) == v.libre and len(self.zapatero.colaClientes) == 0:
+                    if ((self.zapatero.estado == v.libre) or (self.zapatero.estado == v.reparando)) and len(self.zapatero.colaClientes) == 0:
+
+                        #DEJAMOS EN ESPERA TODAS LAS REPARACIONES QUE SE ESTABAN EFECTUANDO EN ESE MOMENTO
+                        if self.zapatero.estado == v.reparando:
+                            self.zapatero.set_tiempo_reparacion(self.fin_reparacion - self.reloj)
+                            self.zapato_a_reparar.set_estado(v.esperando_reanudacion_reparacion)
+
+
                         #Determinamos el nuevo estado del zapatero
                         self.zapatero.determinar_estado_llegada(self.accion_cliente)
                         #Determinamos el estado del cliente
@@ -136,14 +157,16 @@ class Simulador:
                         self.zapatero.colaClientes.append(cliente_llega)
                         cliente_llega.determinar_estado_cola(self.accion_cliente)
 
-
+                #EVENTO FIN DE ATENCION DE CLIENTES
+                #####
+                #####
                 elif proximo_evento == v.eventoFinAtencionCliente:
-                    #Seteamos el reloj y evento
-                    self.evento = v.eventoFinAtencionCliente
-                    self.reloj = self.fin_atencion_cliente
-
                     #Vemos que vino a hacer el cliente
                     cliente_fuera = self.clientes.pop(0)
+
+                    # Seteamos el reloj y evento
+                    self.evento = v.eventoFinAtencionCliente + "(" + str(cliente_fuera.nro) +")"
+                    self.reloj = self.fin_atencion_cliente
 
                     if cliente_fuera.estado == v.siendo_at_pedido:
                         #Acumulamos var estadistica
@@ -187,13 +210,16 @@ class Simulador:
                     # Si hay cola lo mandamos a cola y seteamos su estado en ambos casos
                     # Recordar que si entran clientes no corre el tiempo de reparacion hasta que se vayan
                     if len(self.zapatero.colaZapatos) != 0 and len(self.zapatero.colaClientes) == 0:
+                        #Vemos si habia algun zapato en reparacion
+                        if self.zapato_a_reparar != None:
+                            self.fin_reparacion = self.fin_reparacion + self.zapatero.tiempo_restante_reparacion
                         # Calculo de fin de reparacion
                         # Sacamos zapato de cola y le asignamos estado de reparando
-                        zapato_a_reparar = self.zapatero.colaZapatos.pop(0)
-                        zapato_a_reparar.set_estado(v.reparando)
+                        self.zapato_a_reparar = self.zapatero.colaZapatos.pop(0)
+                        self.zapato_a_reparar.set_estado(v.reparando)
                         self.rnd_reparacion, self.tiempo_reparacion = generadorVariables.rnd_uniforme(
                             self.reparacion_inf, self.reparacion_sup)
-                        self.fin_reparacion = self.reloj + self.tiempo_reparacion
+                        self.fin_reparacion = self.reloj + self.tiempo_reparacion + self.tiempo_secado
                         # Seteamos estado del zapatero
                         self.zapatero.set_estado(v.reparando)
 
@@ -238,6 +264,30 @@ class Simulador:
 
             #AGREGAMOS LA FILA AL VECTOR
             if (self.ver_desde <= self.iteracion <= self.ver_desde + 400) or (self.iteracion == self.iteraciones - 1):
+
+                #Capturamos los datos de los clientes
+                for cli in self.clientes:
+                    if not self.clientes_actuales.__contains__(cli.nro):
+                        self.clientes_actuales.append(cli.nro)
+
+                self.estados_c = ["-"]*len(self.clientes_actuales)
+                for cli in self.clientes:
+                    indice = self.clientes_actuales.index(cli.nro)
+                    self.estados_c[indice] = cli.estado
+
+                #Capturamos los datos de los zapatos
+                for zap in self.zapatos:
+                    if not self.zapatos_actuales.__contains__(zap.nro):
+                        self.zapatos_actuales.append(zap.nro)
+
+                self.estados_z = ["-"]*len(self.zapatos_actuales)
+                for zap in self.zapatos:
+                    indice = self.zapatos_actuales.index(zap.nro)
+                    self.estados_z[indice] = zap.estado
+
+
+
+
                 vector_resultado.append([self.evento,                                   #0
                                          self.reloj,                                    #1
                                          self.rnd_llegadas,                             #2
@@ -264,8 +314,8 @@ class Simulador:
                                          self.ac_clientes_abandonan,                    #23
                                          self.ac_pedidos_efectuados,                    #24
                                          self.ac_retiros_efectuados,                    #25
-                                         self.clientes,                                 #26   Modificar para que en el arreglo se muestren los que se tienen que mostrar. Hacer una snapshot en cada iteracion
-                                         self.zapatos,                                  #27  Idem que anterior
+                                         self.estados_c,                                 #26   Modificar para que en el arreglo se muestren los que se tienen que mostrar. Hacer una snapshot en cada iteracion
+                                         self.estados_z,                                  #27  Idem que anterior
                                          self.iteracion,                                #28
                                         ])
 

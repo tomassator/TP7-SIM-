@@ -41,10 +41,10 @@
                 <th class="header estadisticas" scope="col">Pedidos Ingresados</th>
                 <th class="header estadisticas" scope="col">Retiros efectuados</th>
                 {% for cli in clientes %}
-                <th class="header clientes" scope="col">Estado cliente({{cli.nro}})</th>
+                <th class="header clientes" scope="col">Estado cliente({{cli}})</th>
                 {% endfor%}
                 {% for zap in zapatos %}
-                <th class="header zapatos" scope="col">Estado zapato({{zap.nro}})</th>
+                <th class="header zapatos" scope="col">Estado zapato({{zap}})</th>
                 {% endfor%}
 
 
@@ -83,10 +83,10 @@
                 <td>{{fila.24}}</td>
                 <td>{{fila.25}}</td>
                 {% for cli in fila.26 %}
-                <td>{{cli.estado}}</td>
+                <td>{{cli}}</td>
                 {% endfor %}
                 {% for zap in fila.27 %}
-                <td>{{zap.estado}}</td>
+                <td>{{zap}}</td>
                 {% endfor %}
             </tr>
 
