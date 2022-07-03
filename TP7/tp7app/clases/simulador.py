@@ -6,7 +6,7 @@ from tp7app.clases import zapatos
 from tp7app.clases import clientes
 from tp7app.clases import rungeKutta
 from tp7app.clases import variables as v
-from tp7app.clases import rungekutta
+from tp7app.clases import rungeKutta
 
 
 class Simulador:
@@ -38,7 +38,7 @@ class Simulador:
         self.tiempo_atencion = None
         self.tiempo_entre_interrupciones = None
         self.tiempo_interrupcion = None
-        self.tiempo_secado = 0.192  # Este tiempo se le suma al tiempo de reparacion y es calculado a traves de un runge kutta de 4to orden. Se lo inicializa en 0.40 para probar
+        self.tiempo_secado = rungeKutta.rk4_secado(0, 0) # Este tiempo se le suma al tiempo de reparacion y es calculado a traves de un runge kutta de 4to orden.
 
         # variablesEstadisticas
 
@@ -88,6 +88,7 @@ class Simulador:
     # Funcion que efectua la simulacion
     # LA SIMULACION ARRANCA A LAS 8AM ES DECIR ARRANCA ATENDIENDO
     def simular(self):
+        v.rk4_secado = self.tiempo_secado
         self.vector_resultado = []
 
         for i in range(0, self.iteraciones):
@@ -103,6 +104,7 @@ class Simulador:
             self.tiempo_atencion = v.fuera_sistema
             self.tiempo_interrupcion = v.fuera_sistema
             self.tiempo_entre_interrupciones = v.fuera_sistema
+            self.tiempo_secado = v.fuera_sistema
 
 
             if not self.bandera_inicializacion:
@@ -171,7 +173,7 @@ class Simulador:
 
                         # DEJAMOS EN ESPERA LA REPARACION QUE SE ESTABA EFECTUANDO EN ESE MOMENTO
                         if self.zapatero.estado == v.reparando:
-                            self.zapatero.set_tiempo_reparacion(self.fin_reparacion - self.reloj)
+                            self.zapatero.set_tiempo_reparacion(round(self.fin_reparacion - self.reloj,3))
                             self.zapato_a_reparar.set_estado(v.esperando_reanudacion_reparacion)
                             self.fin_reparacion = round(
                                 self.fin_atencion_cliente + self.zapatero.get_tiempo_reparacion(), 3)
@@ -239,11 +241,11 @@ class Simulador:
 
                         #Calculamos el fin de atencion
                         self.rnd_atencion, self.tiempo_atencion = generadorVariables.rnd_uniforme(self.atencion_inf, self.atencion_sup)
-                        self.fin_atencion_cliente = round(self.reloj + self.tiempo_atencion,3)
+                        self.fin_atencion_cliente = round(self.reloj + self.tiempo_atencion, 3)
 
                         #Si entra un nuevo cliente y habia un zapato esperando su reperacion debe actualizarse su fin de reparacion
                         if self.zapato_a_reparar != None:
-                            self.fin_reparacion = self.fin_atencion_cliente + self.zapatero.get_tiempo_reparacion()
+                            self.fin_reparacion = round(self.fin_atencion_cliente + self.zapatero.get_tiempo_reparacion(),3)
 
                     #Si no habia clientes en la cola
                     #Si hay zapatos en cola o habia algun zapato reparandose.....
@@ -260,9 +262,11 @@ class Simulador:
                             # Sacamos zapato de cola y le asignamos estado de reparando
                             self.zapato_a_reparar = self.zapatero.colaZapatos.pop(0)
                             self.zapato_a_reparar.set_estado(v.siendo_reparados)
+                            #Calculamos el fin de reparacion
+                            self.tiempo_secado = v.rk4_secado
                             self.rnd_reparacion, self.tiempo_reparacion = generadorVariables.rnd_uniforme(
                                 self.reparacion_inf, self.reparacion_sup)
-                            self.fin_reparacion = round(self.reloj + self.tiempo_reparacion + self.tiempo_secado,3)
+                            self.fin_reparacion = round(self.reloj + self.tiempo_reparacion + self.tiempo_secado, 3)
 
 
                     #Si no hay gente en cola tanto clientes como de zapatos....
@@ -295,6 +299,7 @@ class Simulador:
                         #seteamos el estado de el zapato que sale de la cola
                         self.zapato_a_reparar.set_estado(v.siendo_reparados)
                         #calculamos el fin de reparacion
+                        self.tiempo_secado = v.rk4_secado
                         self.rnd_reparacion, self.tiempo_reparacion = generadorVariables.rnd_uniforme(self.reparacion_inf, self.reparacion_sup)
                         self.fin_reparacion = round(self.reloj + self.tiempo_secado + self.tiempo_reparacion,3)
 
@@ -440,8 +445,8 @@ class Simulador:
                                          self.ac_clientes_abandonan,                    #23
                                          self.ac_pedidos_efectuados,                    #24
                                          self.ac_retiros_efectuados,                    #25
-                                         self.estados_c,                                 #26   Modificar para que en el arreglo se muestren los que se tienen que mostrar. Hacer una snapshot en cada iteracion
-                                         self.estados_z,                                  #27  Idem que anterior
+                                         self.estados_c,                                #26   Modificar para que en el arreglo se muestren los que se tienen que mostrar. Hacer una snapshot en cada iteracion
+                                         self.estados_z,                                #27  Idem que anterior
                                          self.iteracion,                                #28
                                          self.zapatos_disponibles_retiro,               #29
                                          self.ac_clientes_ingresan,                     #30

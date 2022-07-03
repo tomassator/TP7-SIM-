@@ -44,3 +44,8 @@ eventoFinAtencionCliente = "fin_atencion_cliente"
 eventoFinReparacion = "fin_reparacion"
 eventoLlegadaInterrupcion = "#CIERRE#_zapateria"
 eventoFinInterrupcion = "#APERTURA#_zapateria"
+
+
+#RungeKutta
+
+rk4_secado = None    #Esta varibale se asigna al iniciar la simulacion

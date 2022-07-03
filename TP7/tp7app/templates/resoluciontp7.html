@@ -68,7 +68,11 @@
                 <td>{{fila.7}}</td>
                 <td>{{fila.8}}</td>
                 <td class="eventos">{{fila.9}}</td>
-                <td>{{fila.10}}</td>
+                {% if fila.10 != "-" %}
+                    <td><a href="/rk" target="_blank">{{fila.10}}</a></td>
+                {% else %}
+                    <td>{{fila.10}}</td>
+                {% endif %}
                 <td>{{fila.11}}</td>
                 <td>{{fila.12}}</td>
                 <td class="eventos">{{fila.13}}</td>

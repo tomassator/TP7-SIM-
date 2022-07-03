@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from tp7app.clases import simulador
+from tp7app.clases import rungeKutta
 
 # Create your views here.
+
 
 def prueba(request):
 
@@ -11,6 +13,12 @@ def inicio(request):
 
 
     return render(request, "inicio.html")
+
+
+def rungekutta(request):
+    vectores = rungeKutta.rk4_secado(0, 0 , para_mostrar=True)
+
+    return render(request,"rungekutta.html", {"vectores":vectores})
 
 
 

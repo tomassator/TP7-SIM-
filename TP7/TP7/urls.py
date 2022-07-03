@@ -22,5 +22,6 @@ urlpatterns = [
     path('inicio', views.inicio),
     path('resoluciontp7', views.resoluciontp7),
     path('prueba', views.prueba),
+    path('rk', views.rungekutta),
 
 ]

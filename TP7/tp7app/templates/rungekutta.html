@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tabla de Runge Kutta</title>
+    <link type="text/css" href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body>
+
+
+	<!-- formato de la tabla  -->
+	<!-- x0, y0, k1, k2, k3, k4, yn -->
+	<table class="table table-bordered border-secodary thead-dark">
+		<thead>
+			<tr>
+				<th class="header" scope="col" style="background-color: rgb(71, 240, 160)">Xo</th>
+				<th class="header" scope="col" style="background-color: rgb(71, 240, 160)">Yo</th>
+				<th class="header" scope="col" style="background-color: rgb(71, 240, 160)">K1</th>
+				<th class="header" scope="col" style="background-color: rgb(71, 240, 160)">K2</th>
+				<th class="header" scope="col" style="background-color: rgb(71, 240, 160)">K3</th>
+				<th class="header" scope="col" style="background-color: rgb(71, 240, 160)">K4</th>
+				<th class="header" scope="col" style="background-color: rgb(71, 240, 160)">Yn</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for vector in vectores %}
+			<tr>
+				<td>{{ vector.0 }}</td>
+				<td>{{ vector.1 }}</td>
+				<td>{{ vector.2 }}</td>
+				<td>{{ vector.3 }}</td>
+				<td>{{ vector.4 }}</td>
+				<td>{{ vector.5 }}</td>
+				<td>{{ vector.6 }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</body>
