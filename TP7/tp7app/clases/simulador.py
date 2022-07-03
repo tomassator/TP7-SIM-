@@ -6,6 +6,7 @@ from tp7app.clases import zapatos
 from tp7app.clases import clientes
 from tp7app.clases import rungeKutta
 from tp7app.clases import variables as v
+from tp7app.clases import rungekutta
 
 
 class Simulador:
@@ -114,6 +115,7 @@ class Simulador:
                 #VERIFICAMOS ESTADO DE LA ZAPATERIA Y EJECUTAMOS ACCIONES CORRESPONDIENTES
                 if not self.bandera_zapateria_abierta:
                     #Eliminamos de los clientes a los que estaban esperando, tambien vaciamos la cola
+                    #Si los clientes estaban esperando un retiro, sumamos al acumulador de zapatos disponibles los zapatos que estaban reservados
                     for cli in self.zapatero.colaClientes:
                         self.clientes.remove(cli)
                     self.zapatero.colaClientes = []
@@ -243,9 +245,9 @@ class Simulador:
                         if self.zapato_a_reparar != None:
                             self.fin_reparacion = self.fin_atencion_cliente + self.zapatero.get_tiempo_reparacion()
 
-
+                    #Si no habia clientes en la cola
                     #Si hay zapatos en cola o habia algun zapato reparandose.....
-                    elif len(self.zapatero.colaZapatos) != 0 or (self.zapato_a_reparar != None):
+                    elif (len(self.zapatero.colaZapatos) != 0) or (self.zapato_a_reparar != None):
                         #Seteamos el fin de atencion y nuevo estado de zapatero
                         self.zapatero.set_estado(v.reparando)
                         self.fin_atencion_cliente = v.fuera_sistema
@@ -322,6 +324,8 @@ class Simulador:
                     #Ejecutamos acciones de cierre
                     self.proxima_llegada = v.fuera_sistema
                     for cli in self.zapatero.colaClientes:
+                        if cli.get_estado() == v.esperando_retiro:
+                            self.zapatos_disponibles_retiro += 1
                         cli.set_estado(v.abandono_cierre_local)
 
 
