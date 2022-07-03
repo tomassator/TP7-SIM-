@@ -13,6 +13,7 @@ siendo_at_retiro = "SAR"
 esperando_retiro = "EPR"
 esperando_pedido = "EPP"
 abandono_sin_zapato = "ASZ"
+abandono_cierre_local = "ACL"
 
 
 #Estados Zapatos
@@ -37,9 +38,9 @@ pedido = "Pedido"
 
 #Nombre eventos
 
-eventoInicializacion = "inicializacion"
+eventoInicializacion = "#######inicializacion#######"
 eventoLlegadaClientes = "llegada_cliente"
 eventoFinAtencionCliente = "fin_atencion_cliente"
 eventoFinReparacion = "fin_reparacion"
-eventoLlegadaInterrupcion = "cierre_zapateria"
-eventoFinInterrupcion = "apertura_zapateria"
+eventoLlegadaInterrupcion = "#CIERRE#_zapateria"
+eventoFinInterrupcion = "#APERTURA#_zapateria"

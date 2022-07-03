@@ -45,6 +45,7 @@ class Simulador:
         self.ac_clientes_abandonan = 0
         self.ac_pedidos_efectuados = 0
         self.ac_retiros_efectuados = 0
+        self.ac_clientes_ingresan = 0
 
         # Banderas
 
@@ -62,10 +63,11 @@ class Simulador:
         self.rnd_accion_cliente = None
         self.rnd_reparacion = None
 
-        #Acumuladores para identificar id de zapatos y clientes que ingresan, zapatos disponibles en el momento
+        #Acumuladores para identificar id de zapatos y clientes que ingresan, zapatos disponibles en el momento. Dias
         self.nro_zapato = 0
         self.nro_cliente = 0
         self.zapatos_disponibles_retiro = 10
+        self.nro_dia = 1
 
         #OBJETOS TEMPORALES QUE SE VAN A MOSTRAR EN LAS ITERACIONES DETERMINADAS
         self.clientes_actuales = []
@@ -109,6 +111,12 @@ class Simulador:
                 proximo_evento = self.obj_evento.determinarSigEvento(self.proxima_llegada, self.fin_atencion_cliente, self.fin_reparacion, self.llegada_interrupcion, self.fin_interrupcion)
                 #Sacamos la accion del cliente
 
+                #VERIFICAMOS ESTADO DE LA ZAPATERIA Y EJECUTAMOS ACCIONES CORRESPONDIENTES
+                if not self.bandera_zapateria_abierta:
+                    #Eliminamos de los clientes a los que estaban esperando, tambien vaciamos la cola
+                    for cli in self.zapatero.colaClientes:
+                        self.clientes.remove(cli)
+                    self.zapatero.colaClientes = []
 
                 #Checkeamos si en la iteracion anterior algun cliente abandono
                 if self.bandera_eliminar_cliente_abandono:
@@ -121,6 +129,7 @@ class Simulador:
                 if proximo_evento == v.eventoLlegadaClientes:
 
                     # Incrementamos el numero de cliente y posteriormente creamos el objeto cliente y le asinamos su numero
+                    self.ac_clientes_ingresan += 1
                     self.nro_cliente += 1
                     cliente_llega = clientes.Clientes()
                     cliente_llega.set_nro(self.nro_cliente)
@@ -209,7 +218,6 @@ class Simulador:
                         # Acumulamos var estadistica
                         self.ac_retiros_efectuados += 1
                         # Se retira un zapato
-
                         self.zapatos.pop(0)
 
 
@@ -295,7 +303,48 @@ class Simulador:
                         self.fin_reparacion = v.fuera_sistema
                         self.zapato_a_reparar = None
 
+##############################################################
+                ###EVENTO CIERRE DE LOCAL (LLEGADA INTERRUPCION)
+                elif proximo_evento == v.eventoLlegadaInterrupcion:
+                    #Seteamos evento y reloj
+                    self.evento = v.eventoLlegadaInterrupcion + "(DIA - " + str(self.nro_dia) + ")"
+                    self.reloj = self.llegada_interrupcion
+                    #Cerramos el local...
+                    self.bandera_zapateria_abierta = False
 
+                    #Sacamos la hora de apertura del local
+                    self.tiempo_interrupcion = 16
+                    self.fin_interrupcion = self.reloj + self.tiempo_interrupcion    #16 son las horas que hay desde las 16hs hasta las 8am
+
+                    #Sacamos la hora de apertura actual para que continue el sistema
+                    self.llegada_interrupcion = v.fuera_sistema
+
+                    #Ejecutamos acciones de cierre
+                    self.proxima_llegada = v.fuera_sistema
+                    for cli in self.zapatero.colaClientes:
+                        cli.set_estado(v.abandono_cierre_local)
+
+
+            ##############################################################
+            ###EVENTO APERTURA DE LOCAL
+                elif proximo_evento == v.eventoFinInterrupcion:
+                    self.nro_dia += 1
+                    # Seteamos evento y reloj
+                    self.evento = v.eventoFinInterrupcion + "\n(DIA - " + str(self.nro_dia) + ")"
+                    self.reloj = self.fin_interrupcion
+
+                    #Abrimos el local...
+                    self.bandera_zapateria_abierta = True
+                    #Sacamos la hora del proximo cierre
+                    self.tiempo_entre_interrupciones = 8
+                    self.llegada_interrupcion = self.reloj + self.tiempo_entre_interrupciones    # 8 porque son las horas que esta abierto el local
+
+                    # Sacamos la hora de cierre actual para que el sistema continue
+                    self.fin_interrupcion = v.fuera_sistema
+
+                    #Calculamos la primera llegada del dia
+                    self.rnd_llegadas, self.tiempo_entre_llegadas = generadorVariables.rnd_exponencial(self.media_llegadas)
+                    self.proxima_llegada = self.tiempo_entre_llegadas + self.reloj
 
 
 
@@ -320,7 +369,7 @@ class Simulador:
                 # Determinamos proxima llegada
                 self.proxima_llegada = self.tiempo_entre_llegadas + self.reloj
                 # Determinamos la llegada interrupcion
-                self.llegada_interrupcion = None  # A las 8 horas de arrancada la simulacion deja de recibir pedidos #SE SETEA EN NONE POR CUESTIONES DE PRUEBA
+                self.llegada_interrupcion = 8  # A las 8 horas de arrancada la simulacion deja de recibir pedidos #SE SETEA EN NONE POR CUESTIONES DE PRUEBA
                 # Inicializamos las variables estadisticas
                 self.ac_zapatos_terminados = 10
                 self.ac_clientes_abandonan = 0
@@ -391,6 +440,20 @@ class Simulador:
                                          self.estados_z,                                  #27  Idem que anterior
                                          self.iteracion,                                #28
                                          self.zapatos_disponibles_retiro,               #29
+                                         self.ac_clientes_ingresan,                     #30
                                         ])
 
         return self.vector_resultado
+
+
+
+
+    #Calculador de estadisticas
+
+    def calcular_estadisticas(self):
+        porcentaje_clientes_abandonan = round((self.ac_clientes_abandonan*100 )/self.ac_clientes_ingresan,3)
+        porcentaje_zapatos_sin_retirar = round(((self.ac_zapatos_terminados - self.ac_retiros_efectuados) * 100) / self.ac_zapatos_terminados,3)
+        zapatos_reparados = self.ac_zapatos_terminados
+        clientes_totales = self.ac_clientes_ingresan
+
+        return  porcentaje_clientes_abandonan, porcentaje_zapatos_sin_retirar, zapatos_reparados, clientes_totales

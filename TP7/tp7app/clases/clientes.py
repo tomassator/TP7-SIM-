@@ -23,7 +23,7 @@ class Clientes:
     #Determina que accion va a ejecutar el cliente
     def determinar_accion(self):
         a = random.random()
-        if a < 0.49:
+        if a < 0.50:
             return round(a,3), v.retirar
         else:
             return round(a,3), v.pedido

@@ -19,9 +19,14 @@ class Evento:
 
 
         if not self.banderaPrimeraIteracion:
-            evento = self.eventoLlegadaClientes
-            minimo = tiempoL
+            minimo = 100000000000
 
+            try:
+                if tiempoL < minimo:
+                    minimo = tiempoL
+                    evento = self.eventoLlegadaClientes
+            except:
+                pass
             try:
                 if tiempoFAC < minimo:
                     minimo = tiempoFAC

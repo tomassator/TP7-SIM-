@@ -37,10 +37,11 @@
                 <th class="header zapatero" scope="col">Cola zapatos a reparar</th>
                 <th class="header zapatero" scope="col">Tiempo restante reparacion</th>
                 <th class="header estadisticas" scope="col">Zapatos Reparados</th>
+                <th class="header estadisticas" scope="col">Clientes Totales</th>
                 <th class="header estadisticas" scope="col">Clientes Abandonan</th>
                 <th class="header estadisticas" scope="col">Pedidos Ingresados</th>
                 <th class="header estadisticas" scope="col">Retiros efectuados</th>
-                <th class="header estadisticas" scope="col">Zapatos Disponibles</th>
+                <th class="header estadisticas" scope="col">Zapatos disponibles para retirar</th>
                 {% for cli in clientes %}
                 <th class="header clientes" scope="col">Estado cliente({{cli}})</th>
                 {% endfor%}
@@ -80,6 +81,7 @@
                 <td>{{fila.20}}</td>
                 <td>{{fila.21}}</td>
                 <td>{{fila.22}}</td>
+                <td>{{fila.30}}</td>
                 <td>{{fila.23}}</td>
                 <td>{{fila.24}}</td>
                 <td>{{fila.25}}</td>
@@ -96,6 +98,19 @@
       </tbody>
     </table>
 
+    <div class="container pb-5">
+        <div class="row">
+          <div class="col>">
+            <h2> Porcentaje de clientes que abandonan porque no habia zapatos: {{pca}} %</h2>
+            <h2> Porcentaje zapatos que no se retiraron: {{pzsr}} %</h2>
+            <h2> Total de zapatos reparados: {{zr}} </h2>
+            <h2> Total de clientes: {{ct}} </h2>
+            <br>
+            <br>
+            <br>
+          </div>
+        </div>
+      </div>
 
 </body>
 </html>

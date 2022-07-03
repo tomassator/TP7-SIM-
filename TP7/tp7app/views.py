@@ -58,10 +58,8 @@ def resoluciontp7(request):
             fila[26] = vector_estados_cliente[nro_fila]
 
 
-
-#CONTROLAR QUE ESTE BIEN EL VECTOR Y PONER LA INTERRUPCION DE CIERRE DE LOCAL
-
-
+        #Tomamos metricas para mostrar
+        pca , pzsr, zr, ct = simulacion.calcular_estadisticas()
 
 
 
@@ -70,4 +68,8 @@ def resoluciontp7(request):
 
 
 
-        return render(request, "resoluciontp7.html", {"vector": vam, "clientes":simulacion.clientes_actuales, "zapatos": simulacion.zapatos_actuales, "verdesde":int(verDesde)})
+
+
+        return render(request, "resoluciontp7.html", {"vector": vam, "clientes":simulacion.clientes_actuales, "zapatos": simulacion.zapatos_actuales, "verdesde":int(verDesde),
+                                                      "pca":pca , "pzsr":pzsr, "zr":zr, "ct":ct
+                                                      })
