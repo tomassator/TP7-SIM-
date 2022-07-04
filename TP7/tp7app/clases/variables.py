@@ -10,8 +10,8 @@ reparando = "R"
 
 siendo_at_pedido = "SAP"
 siendo_at_retiro = "SAR"
-esperando_retiro = "EPR"
-esperando_pedido = "EPP"
+esperando_retiro = "EAR" #Se cambio EPR POR EAR
+esperando_pedido = "EAP" #SE CAMBIO EPP POR EAP    EA-> Esperando atencion
 abandono_sin_zapato = "ASZ"
 abandono_cierre_local = "ACL"
 
@@ -19,7 +19,7 @@ abandono_cierre_local = "ACL"
 #Estados Zapatos
 
 siendo_reparados = "SR"
-reparados = "RL"  #Reparacion Lista
+reparados = "RT"  #Reparacion terminada
 esperando_reanudacion_reparacion = "ERR"
 esperando_reparo = "ER"
 

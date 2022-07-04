@@ -19,45 +19,45 @@
             <div class="row">
                 <div class="col mb-3">
                     <label for="cantIteraciones" class="form-label">Cantidad de iteraciones</label>
-                    <input type="number" min="0" class="form-control" id="cantIteraciones" name="cantIteraciones" value="10000">
+                    <input type="number" min="0" step="1" class="form-control" id="cantIteraciones" name="cantIteraciones" value="10000">
                 </div>
             </div>
 
             <div class="row">
                 <div class="col mb-3">
                     <label for="desde" class="form-label">Ver vector desde la iteracion: </label>
-                    <input type="number" class="form-control" id="desde" name="desde" value="0">
+                    <input type="number" min="0" step="1" class="form-control" id="desde" name="desde" value="0">
                 </div>
             </div>
 
             <div class="row">
                 <div class="col mb-3">
                     <label for="mediaLlegadas" class="form-label"> Media llegadas (Exp en horas)</label>
-                    <input type="number" class="form-control" id="mediaLlegadas" name="mediaLlegadas" value="0.25">
+                    <input type="number" min="0" step="0.0001" class="form-control" id="mediaLlegadas" name="mediaLlegadas" value="0.25">
                 </div>
             </div>
 
             <div class="row">
                 <div class="col mb-3">
                     <label for="reparacionInferior" class="form-label">Extremo inferior tiempo reparaciones (En horas)</label>
-                    <input type="number" class="form-control" id="reparacionInferior" name="reparacionInferior" value="0.11">
+                    <input type="number" min="0" step="0.0001" class="form-control" id="reparacionInferior" name="reparacionInferior" value="0.11">
                 </div>
 
                 <div class="col mb-3">
                     <label for="reparacionSuperior" class="form-label"> Extremo superior tiempo reparaciones (En horas)</label>
-                    <input type="number" class="form-control" id="reparacionSuperior" name="reparacionSuperior" value="0.38">
+                    <input type="number" min="0" step="0.0001" class="form-control" id="reparacionSuperior" name="reparacionSuperior" value="0.38">
                 </div>
             </div>
 
             <div class="row">
                 <div class="col mb-3">
                     <label for="atencionInferior" class="form-label"> Extremo inferior tiempo atencion (En horas)</label>
-                    <input type="number" class="form-control" id="atencionInferior" name="atencionInferior" value="0.03">
+                    <input type="number" min="0" step="0.0001" class="form-control" id="atencionInferior" name="atencionInferior" value="0.03">
                 </div>
 
                 <div class="col mb-3">
                     <label for="atencionSuperior" class="form-label"> </label>
-                    <input type="number" class="form-control" id="atencionSuperior" name="atencionSuperior" value="0.06">
+                    <input type="number" min="0" step="0.0001" class="form-control" id="atencionSuperior" name="atencionSuperior" value="0.06">
                 </div>
             </div>
             <div class="row">
@@ -66,6 +66,51 @@
                 </div>
             </div>
         </form>
+    </div>
+
+
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col">
+
+                <h1 style="text-decoration: underline">OBJETOS</h1>
+
+                <span style="font-size: 20px"> <b>.Cliente --></b>  Cliente - Temporal - Estados {Siendo atendido reparacion(SAR); Siendo atentido pedido(SAP); Esperando Atencion Reparo(EAR); Esperando Atencion Pedido(EAP); Abandono sin zapato (ASZ); Abandono cierre de local (ACL)</span><br>
+                <span style="font-size: 20px"> <b>.Zapatos --></b> Cliente - Temporal - Estados {Siendo reparados (SR); Reparacion terminada(RT), Esperando reanudacion reparacion (ERR), Esperando reparacion(ER)}</span><br>
+                <span style="font-size: 20px"> <b>.Zapatero --></b>Servidor - Permanente - Estados {Libre(L), Atendiendo Reparacion (AR), Atendiendo Pedido (AP), Reparando(R)}</span><br>
+
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col">
+
+                <h1 style="text-decoration: underline"> EVENTOS</h1>
+                <span style="font-size: 20px"> .<b>llegada_clientes</b> - Distribucion exponencial ( Media 0,25 Horas - Editable)</span><br>
+                <span style="font-size: 20px"> .<b>fin_atencion_cliente</b> - Distribucion Uniforme ( Intervalo [0,03-0,06] en horas - Editable)</span><br>
+                <span style="font-size: 20px"> .<b>fin_reparacion</b> - Distribucion Uniforme  ( Intervalo [0,11 - 0,38 ] en horas - editable) + EC diferencial ( t=1 - 1 hora)</span><br>
+                <span style="font-size: 20px"> .<b>Cierre de local</b> - Cada 24 horas</span><br>
+                <span style="font-size: 20px"> .<b>Apertura de local</b> - Cada 24 horas</span><br>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col">
+                <h1 style="text-decoration: underline"> COLAS</h1>
+                <span style="font-size: 20px"><b> Cola clientes</b></span><br>
+                <span style="font-size: 20px"> <b>Cola zapatos</b></span><br>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col">
+                <h1 style="text-decoration: underline"> CALCULOS DEL EJERCICIO</h1>
+                <span style="font-size: 20px">  <b>.Porcentaje de clientes que abandonan porque no habia zapatos  --> </b>Acumulador de los clientes que se fueron porque los zapatos no estaban listos para retirarse</span><br>
+                <span style="font-size: 20px">  <b>.Porcentaje zapatos que no se retiraron --> </b>Se sobre el total de zapatos que estaban listos para retirar</span><br>
+                <span style="font-size: 20px">  <b>.Total de zapatos reparados --> </b>Cantidad de zapatos que se llegaron a reparar - se calcula mediante un acumulador cada vez que se termina de reparar un zapato</span><br>
+                <span style="font-size: 20px">  <b>.Total de clientes --> </b>Todos los clientes que ingresaron al sistema - se calcula mediante un acumulador cada vez que llega un cliente</span><br>
+            </div>
+        </div>
     </div>
 
 </body>
