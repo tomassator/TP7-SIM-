@@ -6,8 +6,11 @@ from tp7app.clases import rungeKutta
 
 
 def prueba(request):
+    iteracion = 100000
+    total = iteracion/10000
 
-    return render(request, "prueba.html")
+
+    return render(request, "prueba.html", {"iteracion":iteracion, "total":total})
 
 def inicio(request):
 

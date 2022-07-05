@@ -1,5 +1,4 @@
 
-
 function pintar(nro, verdesde){
 
     btn = document.getElementById("btnselec"+nro)
@@ -18,6 +17,11 @@ function pintar(nro, verdesde){
 
 
 }
+
+
+
+
+
 
 
 

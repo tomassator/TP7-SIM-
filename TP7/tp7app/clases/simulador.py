@@ -7,6 +7,7 @@ from tp7app.clases import clientes
 from tp7app.clases import rungeKutta
 from tp7app.clases import variables as v
 from tp7app.clases import rungeKutta
+import time
 
 
 class Simulador:
@@ -88,10 +89,28 @@ class Simulador:
     # Funcion que efectua la simulacion
     # LA SIMULACION ARRANCA A LAS 8AM ES DECIR ARRANCA ATENDIENDO
     def simular(self):
+
         v.rk4_secado = self.tiempo_secado
         self.vector_resultado = []
 
+        #ta = time.time()
+        #cada_1000 = 100000
+
         for i in range(0, self.iteraciones):
+            #Script para ver demora cada mil lineas --- aprox 0.015 seg
+
+            '''
+            if i == cada_1000:
+                tb = time.time()
+                tc = ta-tb
+                ta = tb
+                cada_1000 += 100000
+                print(tc)
+            '''
+
+
+            #print(self.iteracion)
+
 
             #Seteamos a valor default las variables que se ejecutan una sola linea y no se arrastran
             self.accion_cliente = v.fuera_sistema
