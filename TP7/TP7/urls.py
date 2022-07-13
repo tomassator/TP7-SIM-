@@ -19,7 +19,7 @@ from tp7app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('inicio', views.inicio),
+    path('', views.inicio),
     path('resoluciontp7', views.resoluciontp7),
     path('prueba', views.prueba),
     path('rk', views.rungekutta),
